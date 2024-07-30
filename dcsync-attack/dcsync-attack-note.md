@@ -31,6 +31,29 @@ If the attacker has previously obtained the hash of a password, it can be used t
 - Credentail dumping
 The attacker may dump credentials on machines where administrators or privileged accounts have access
 
+### Attack flow
+
+Naming:
+
+- Attacker = Oscar
+- Domain controler = DC
+- Privileged user = Alice
+- Normal user = Bob
+
+Settings:
+
+Alice and Bob are users in the directory and have access to various resources in the network. Among them, the share access to a VM which would not necessary require privilege access, yet, both Alice and Bob access with their accoutns. Oscar would like to perform a DCSync attack to dump credentials from the domain controller and move lateraly in the network. Oscar has compromized Bob's account and got access to the VM where Alice and Bob work some time to time.
+
+Flow: 
+
+1. Oscar is able to obtain the hash of Alice's password by dumping the predentials on the machine.
+2. Oscar performs a Pass-The-Hash(PtH) and uses the retrived hash to issue a Kerberos TGT request.
+3. The Key Distribution Center (KDC) issues a Ticket since the username and hash of the password match.
+4. Oscar can request a Ticket-Granting Service(TGS) ticket for specific service with the previosly obtained TGT, specifically, Oscar needs a ticket for the domain controller.
+5. After having obtained the necessary tickets, Oscar can perform a Pass-the-Tikect(PtT) and issue the correct request to the domain controller.
+6. The domain controller verifies the ticket and starts sending information back as if it was a replication with another Domain Controller.
+
+
 ### Example of the attack
 
 1. Initial Compromise: The attacker uses phishing to gain credentials for a regular user account.
